@@ -14,15 +14,23 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFoundException(final NotFoundException e) {
-        log.warn("Объект не найден");
+        log.warn("Получен статус 404 NOT_FOUND {}", e.getMessage(), e);
         return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler({MethodArgumentNotValidException.class, ValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(final Exception e) {
-        log.warn("Ошибка валидации объекта");
+        log.warn("Получен статус 400 BAD_REQUEST {}", e.getMessage(), e);
         return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler({NotUniqueEmailException.class})
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleNotUniqueEmailException(final RuntimeException e) {
+        log.warn("Не уникальный Email.");
+        return new ErrorResponse(e.getMessage()
+        );
     }
 
     @ExceptionHandler
