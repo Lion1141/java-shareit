@@ -56,7 +56,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    @Transactional
     public BookingDtoOut findBookingByUserId(Long userId, Long bookingId) {
         Booking booking = validateBookingDetails(userId, bookingId, 2);
         assert booking != null;
@@ -64,7 +63,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    @Transactional
     public List<BookingDtoOut> findAll(Long bookerId, String state) {
         userService.findById(bookerId);
         switch (validState(state)) {
@@ -102,7 +100,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    @Transactional
     public List<BookingDtoOut> findAllOwner(Long ownerId, String state) {
         userService.findById(ownerId);
         switch (validState(state)) {

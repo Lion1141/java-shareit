@@ -6,7 +6,8 @@ import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -36,5 +37,13 @@ public class Item {
         this.name = name;
         this.description = description;
         this.available = available;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || this.getClass() != o.getClass()) {
+            return false;
+        }
+        return ((Item) o).id.equals(this.id);
     }
 }
