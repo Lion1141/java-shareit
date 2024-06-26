@@ -5,11 +5,14 @@ import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Getter
 @Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity
 @Table(name = "items")
 public class Item {
@@ -41,9 +44,15 @@ public class Item {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || this.getClass() != o.getClass()) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        return ((Item) o).id.equals(this.id);
+        Item item = (Item) o;
+        return (Objects.equals(name, item.name)) &&
+                (Objects.equals(description, item.description));
     }
+
 }

@@ -1,31 +1,20 @@
 package ru.practicum.shareit.request.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.user.User;
 
-import java.time.LocalDate;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class ItemRequestDto {
-    private Long id;
+
+    @NotBlank
+    @Size(max = 255)
     private String description;
-    private User requester;
-    private LocalDate created;
-
-    public ItemRequestDto(Long id, String description) {
-        this.id = id;
-        this.description = description;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || this.getClass() != o.getClass()) {
-            return false;
-        }
-        return ((ItemRequestDto) o).id.equals(this.id);
-    }
 }
