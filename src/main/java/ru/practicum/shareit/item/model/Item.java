@@ -54,4 +54,9 @@ public class Item {
         return (Objects.equals(name, item.name)) &&
                 (Objects.equals(description, item.description));
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, description);
+    }
 }
