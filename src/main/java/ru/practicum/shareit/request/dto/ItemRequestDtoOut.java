@@ -6,9 +6,7 @@ import ru.practicum.shareit.item.dto.ItemDtoOut;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Getter
-@Setter
-@ToString
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -19,12 +17,4 @@ public class ItemRequestDtoOut {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime created;
     private List<ItemDtoOut> items;
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || this.getClass() != o.getClass()) {
-            return false;
-        }
-        return ((ItemRequestDtoOut) o).getId().equals(this.id);
-    }
 }

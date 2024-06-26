@@ -55,9 +55,12 @@ public class Item {
                 (Objects.equals(description, item.description));
     }
 
+
     @Override
     public int hashCode() {
-        return Objects.hash(name, description);
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        return result;
     }
 
 }
