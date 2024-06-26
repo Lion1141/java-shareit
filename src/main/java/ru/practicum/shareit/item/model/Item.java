@@ -7,9 +7,9 @@ import ru.practicum.shareit.user.User;
 import javax.persistence.*;
 import java.util.Objects;
 
-@Getter
-@Setter
-@ToString
+@Data
+//Вернул @Data так как не смог переопределить метод hashcode
+//без которого падали тесты github
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -40,23 +40,5 @@ public class Item {
         this.name = name;
         this.description = description;
         this.available = available;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Item item = (Item) o;
-        return (Objects.equals(name, item.name)) &&
-                (Objects.equals(description, item.description));
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, description);
     }
 }
