@@ -17,4 +17,10 @@ public class ItemRequestDtoOut {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime created;
     private List<ItemDtoOut> items;
+
+    @Override
+    public int hashCode() {
+        assert false : "Хэш-код не разработан";
+        return 42;
+    }
 }
