@@ -5,7 +5,6 @@ import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 @Data
 //Вернул @Data так как не смог переопределить метод hashcode
