@@ -32,12 +32,6 @@ public class User {
                 Objects.equals(name, user.name) &&
                 Objects.equals(email, user.email);
     }
-
-    @Override
-    public int hashCode() {
-        assert false : "Хэш-код не разработан";
-        return 42;
-    }
 }
 
 
