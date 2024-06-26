@@ -32,4 +32,13 @@ public class User {
                 Objects.equals(name, user.name) &&
                 Objects.equals(email, user.email);
     }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (email != null ? email.hashCode() : 0);
+        return result;
+    }
 }
+
+
