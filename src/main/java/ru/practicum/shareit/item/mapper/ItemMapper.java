@@ -16,7 +16,7 @@ public class ItemMapper {
                 item.getName(),
                 item.getDescription(),
                 item.getAvailable());
-        if(item.getRequest() != null) {
+        if (item.getRequest() != null) {
             itemDto.setRequestId(item.getRequest().getId());
         }
         return itemDto;
@@ -45,6 +45,7 @@ public class ItemMapper {
                 comments,
                 nextBooking);
     }
+
     public Item toItem(ItemDto itemDto) {
         return new Item(
                 itemDto.getName(),
