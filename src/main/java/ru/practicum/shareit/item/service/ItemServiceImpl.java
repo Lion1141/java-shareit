@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingMapper;
@@ -20,6 +22,7 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -35,11 +38,13 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
+    private final ItemRequestRepository itemRequestRepository;
     private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
     private final UserService userService;
@@ -50,21 +55,23 @@ public class ItemServiceImpl implements ItemService {
         UserDto user = userService.findById(userId);
         Item item = ItemMapper.toItem(itemDto);
         item.setOwner((UserMapper.toUser(user)));
+        if (itemDto.getRequestId() != null) {
+            item.setRequest(itemRequestRepository.getReferenceById(itemDto.getRequestId()));
+        }
         return ItemMapper.toItemDtoOut(itemRepository.save(item));
     }
+
 
     @Override
     @Transactional
     public ItemDtoOut update(Long userId, Long itemId, ItemDto itemDto) {
         UserDto user = userService.findById(userId);
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> {
-                    return new NotFoundException("Вещи с таким id не существует");
-                }
+                .orElseThrow(() -> new NotFoundException("Вещи с " + itemId + " не существует")
                 );
         if (!UserMapper.toUser(user).equals(item.getOwner())) {
-            throw new NotFoundException("Пользователь с id " + userId +
-                    " не является владельцем вещи с id " + itemId);
+            throw new NotFoundException("Пользователь с id = " + userId +
+                    " не является собственником вещи id = " + itemId);
         }
         Boolean isAvailable = itemDto.getAvailable();
         if (isAvailable != null) {
@@ -82,7 +89,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional
     public ItemDtoOut findItemById(Long userId, Long itemId) {
         userService.findById(userId);
         Optional<Item> itemGet = itemRepository.findById(itemId);
@@ -107,11 +113,12 @@ public class ItemServiceImpl implements ItemService {
         return itemDtoOut;
     }
 
+
     @Override
-    @Transactional
-    public List<ItemDtoOut> findAll(Long userId) {
+    public List<ItemDtoOut> findAll(Long userId, Integer from, Integer size) {
         UserDto owner = userService.findById(userId);
-        List<Item> itemList = itemRepository.findAllByOwnerId(userId);
+        Pageable pageable = PageRequest.of(from / size, size);
+        List<Item> itemList = itemRepository.findAllByOwnerId(userId, pageable);
         List<Long> idList = itemList.stream()
                 .map(Item::getId)
                 .collect(Collectors.toList());
@@ -137,14 +144,16 @@ public class ItemServiceImpl implements ItemService {
                 .collect(toList());
     }
 
+
     @Override
     @Transactional
-    public List<ItemDtoOut> search(Long userId, String text) {
+    public List<ItemDtoOut> search(Long userId, String text, Integer from, Integer size) {
         userService.findById(userId);
-        if(text.isBlank()) {
+        Pageable pageable = PageRequest.of(from / size, size);
+        if (text.isBlank()) {
             return Collections.emptyList();
         }
-        List<Item> itemList = itemRepository.search(text);
+        List<Item> itemList = itemRepository.search(text, pageable);
         return itemList.stream()
                 .map(ItemMapper::toItemDtoOut)
                 .collect(toList());
@@ -152,21 +161,22 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public CommentDtoOut createComment(Long userId, CommentDto commentDto,Long itemId) {
+    public CommentDtoOut createComment(Long userId, CommentDto commentDto, Long itemId) {
         User user = UserMapper.toUser(userService.findById(userId));
         Optional<Item> itemById = itemRepository.findById(itemId);
 
         if (itemById.isEmpty()) {
-            throw new NotFoundException("У пользователя с id " + userId +
-                    " не существует вещи с id " + itemId);
+
+            throw new NotFoundException("У пользователя с id = " + userId + " не "
+                    + "существует вещи с id = " + itemId);
         }
         Item item = itemById.get();
 
         List<Booking> userBookings = bookingRepository.findAllByUserBookings(userId, itemId, LocalDateTime.now());
 
         if (userBookings.isEmpty()) {
-            throw new ValidationException("У пользователя с id " + userId +
-                    " должно быть хотя бы одно бронирование предмета с id " + itemId);
+            throw new ValidationException("У пользователя с id " + userId
+                    + " должно быть хотя бы одно бронирование предмета с id " + itemId);
         }
 
         return CommentMapper.toCommentDtoOut(commentRepository.save(CommentMapper.toComment(commentDto, item, user)));
@@ -187,7 +197,7 @@ public class ItemServiceImpl implements ItemService {
 
         return bookings
                 .stream()
-                .filter(bookingDto -> !bookingDto.getStart().isAfter(time))
+                .filter(bookingDTO -> !bookingDTO.getStart().isAfter(time))
                 .reduce((booking1, booking2) -> booking1.getStart().isAfter(booking2.getStart()) ? booking1 : booking2)
                 .orElse(null);
     }
@@ -199,7 +209,7 @@ public class ItemServiceImpl implements ItemService {
 
         return bookings
                 .stream()
-                .filter(bookingDto -> bookingDto.getStart().isAfter(time))
+                .filter(bookingDTO -> bookingDTO.getStart().isAfter(time))
                 .findFirst()
                 .orElse(null);
     }

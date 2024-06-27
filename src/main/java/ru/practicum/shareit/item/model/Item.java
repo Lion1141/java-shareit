@@ -1,15 +1,19 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.*;
+import org.hibernate.Hibernate;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
+import java.util.Objects;
 
-@Getter
 @Setter
+@Getter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity
 @Table(name = "items")
 public class Item {
@@ -40,10 +44,20 @@ public class Item {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (o == null || this.getClass() != o.getClass()) {
-            return false;
-        }
-        return ((Item) o).id.equals(this.id);
+    public int hashCode() {
+        return getClass().hashCode();
     }
+
+    @Override
+    public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
+                return false;
+            }
+            Item item = (Item) o;
+            return (Objects.equals(name, item.name)) &&
+                    (Objects.equals(description, item.description));
+        }
 }
