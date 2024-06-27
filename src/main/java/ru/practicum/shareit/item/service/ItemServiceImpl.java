@@ -24,8 +24,8 @@ import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.UserMapper;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
@@ -88,9 +88,7 @@ public class ItemServiceImpl implements ItemService {
         return ItemMapper.toItemDtoOut(item);
     }
 
-
     @Override
-    @Transactional
     public ItemDtoOut findItemById(Long userId, Long itemId) {
         userService.findById(userId);
         Optional<Item> itemGet = itemRepository.findById(itemId);
@@ -117,7 +115,6 @@ public class ItemServiceImpl implements ItemService {
 
 
     @Override
-    @Transactional
     public List<ItemDtoOut> findAll(Long userId, Integer from, Integer size) {
         UserDto owner = userService.findById(userId);
         Pageable pageable = PageRequest.of(from / size, size);

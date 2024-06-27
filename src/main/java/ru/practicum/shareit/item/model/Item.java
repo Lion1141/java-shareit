@@ -1,14 +1,16 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.*;
+import org.hibernate.Hibernate;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
+import java.util.Objects;
 
-@Data
-//Вернул @Data так как не смог переопределить метод hashcode
-//без которого падали тесты github
+@Setter
+@Getter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -40,4 +42,22 @@ public class Item {
         this.description = description;
         this.available = available;
     }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
+                return false;
+            }
+            Item item = (Item) o;
+            return (Objects.equals(name, item.name)) &&
+                    (Objects.equals(description, item.description));
+        }
 }
