@@ -32,6 +32,7 @@ public class User {
         Objects.equals(name, user.name) &&
         Objects.equals(email, user.email);
     }
+
     public int hashCode() {
         return getClass().hashCode();
     }
