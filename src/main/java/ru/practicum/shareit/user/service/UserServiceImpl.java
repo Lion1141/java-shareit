@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDto add(UserDto userDto) {
         User user = UserMapper.toUser(userDto);
-        user = userRepository.save(user);
+        userRepository.save(user);
         return UserMapper.toUserDto(user);
     }
 
@@ -31,9 +31,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDto update(Long id, UserDto userDto) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> {
-                    return new NotFoundException("Пользователя с " + id + " не существует");
-                }
+                .orElseThrow(() -> new NotFoundException("Пользователя с " + id + " не существует")
                 );
         String name = userDto.getName();
         if (name != null && !name.isBlank()) {
@@ -47,12 +45,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public UserDto findById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> {
-                            return new NotFoundException("Пользователя с " + id + " не существует");
-                        }
+                .orElseThrow(() -> new NotFoundException("Пользователя с " + id + " не существует")
                 );
         return UserMapper.toUserDto(user);
     }
@@ -64,7 +59,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public List<UserDto> findAll() {
         return userRepository.findAll().stream()
                 .map(UserMapper::toUserDto)

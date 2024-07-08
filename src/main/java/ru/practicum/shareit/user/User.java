@@ -1,13 +1,17 @@
 package ru.practicum.shareit.user;
 
 import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Getter
 @Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity
 @Table(name = "users")
 public class User {
@@ -21,10 +25,16 @@ public class User {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || this.getClass() != o.getClass()) {
-            return false;
-        }
-        return ((User) o).id.equals(this.id);
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id) &&
+        Objects.equals(name, user.name) &&
+        Objects.equals(email, user.email);
+    }
+
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }
 
