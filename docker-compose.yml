@@ -15,11 +15,12 @@ services:
     build: ./server
     container_name: server
     ports:
-      - "9090:9090"
+      - "9091:9091"
     depends_on:
       - db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/shareit
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
+      - TZ=Asia/Vladivostok
   db:
     # образ, из которого должен быть запущен контейнер
     image: postgres:13.7-alpine
@@ -34,3 +35,8 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=1234
+    healthcheck:
+          test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+          timeout: 5s
+          interval: 5s
+          retries: 10
