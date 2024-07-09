@@ -11,7 +11,6 @@ import java.util.List;
 
 import static ru.practicum.shareit.item.ItemController.USER_HEADER;
 
-
 @RestController
 @RequestMapping(path = "/requests")
 @RequiredArgsConstructor
