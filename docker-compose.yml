@@ -20,7 +20,8 @@ services:
       - db
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
-      - TZ=Asia/Vladivostok
+    # Это строка для тестов в Postman
+    #  - TZ=Asia/Vladivostok
   db:
     # образ, из которого должен быть запущен контейнер
     image: postgres:13.7-alpine
